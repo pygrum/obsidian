@@ -1,0 +1,32 @@
+{
+    "replace-string":"PAYLOAD",
+    "targets":
+    [
+        {
+            "name":"example",
+            "url":"https://example.com",
+            "endpoints":
+            [
+                "/api"
+            ],
+            "method":"POST",
+            "headers":
+            {
+                "Accept":"application/json"
+            },
+            "cookies": 
+            {
+                "name1":"example",
+                "name2":"example"
+            },
+            "post":
+            {
+                "type":"json",
+                "data":
+                {
+                    "client-id":"PAYLOAD"
+                }
+            }
+        }
+    ]
+}

