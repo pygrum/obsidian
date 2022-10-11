@@ -4,29 +4,32 @@
     [
         {
             "name":"example",
-            "url":"https://example.com",
+            "uri":"https://example.com",
             "endpoints":
             [
-                "/api"
-            ],
-            "method":"POST",
-            "headers":
-            {
-                "Accept":"application/json"
-            },
-            "cookies": 
-            {
-                "name1":"example",
-                "name2":"example"
-            },
-            "post":
-            {
-                "type":"json",
-                "data":
                 {
-                    "client-id":"PAYLOAD"
+                    "endpoint":"/api",
+                    "method":"POST",
+                    "params":{},
+                    "headers":
+                    {
+                        "Accept":"application/json"
+                    },
+                    "cookies": 
+                    {
+                        "name1":"example",
+                        "name2":"example"
+                    },
+                    "post":
+                    {
+                        "json":
+                        {
+                            "client-id":"PAYLOAD"
+                        },
+                        "data":{}
+                    }
                 }
-            }
+            ]
         }
     ]
 }
