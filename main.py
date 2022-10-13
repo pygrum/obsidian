@@ -16,7 +16,9 @@ def log ( call ):
     This function will send a json object of the details of the request that we sent, as well as the details of
     the response of the server. This is for the future, to export data to a dashboard for example.
     """
-    print( call )
+    # print( call )
+
+
 
 def replace_dicts ( obj, rep_str, payload ):
     # Replaces each replace-string ('i.e. PAYLOAD') in all dict keys' values with the payload.
@@ -54,7 +56,19 @@ def process (target, payload, endpoint, rep_str):
     except:
         JSON = {}
 
-    #response = requests.request()
+    
+
+    # fill request obj with config params
+    response = requests.request(
+    REQUEST_VERB,                               # e.g. get, post, put, delete
+    URL,                                    
+    params=PARAMS,                              # get request parameters (empty dict if nonexistent)
+    headers=HEADERS,                            
+    cookies=COOKIES,
+    json=JSON,                                  # json in request body
+    data=DATA,                                  # any post data (file input support can be added in the future)
+    )
+
 
     call = {
         "method":REQUEST_VERB,
@@ -66,7 +80,8 @@ def process (target, payload, endpoint, rep_str):
             "json":JSON,
             "data":DATA,
         },
-        "response":"test"                                       # change this
+        "status-code":response.status_code
+        "response-data":response.__dict__
     }
     log(call)
 
