@@ -56,17 +56,19 @@ def process (target, payload, endpoint, rep_str):
     except:
         JSON = {}
 
-    #response = requests.request()
+    
 
+    # fill request obj with config params
     response = requests.request(
-    REQUEST_VERB,
-    URL,
-    params=PARAMS,
-    headers=HEADERS,
+    REQUEST_VERB,                               # e.g. get, post, put, delete
+    URL,                                    
+    params=PARAMS,                              # get request parameters (empty dict if nonexistent)
+    headers=HEADERS,                            
     cookies=COOKIES,
-    json=JSON,
-    data=DATA,
+    json=JSON,                                  # json in request body
+    data=DATA,                                  # any post data (file input support can be added in the future)
     )
+
 
     call = {
         "method":REQUEST_VERB,
