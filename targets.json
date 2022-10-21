@@ -1,31 +1,27 @@
 {
     "replace-string":"PAYLOAD",
+    "proxies":{},
     "targets":
     [
         {
-            "name":"example",
-            "uri":"https://example.com",
+            "name":"log4shell app",
+            "uri":"http://172.17.0.2",
             "endpoints":
             [
                 {
-                    "endpoint":"/api",
-                    "method":"POST",
+                    "port":"8080",
+                    "endpoint":"/",
+                    "method":"GET",
                     "params":{},
                     "headers":
                     {
-                        "Accept":"application/json"
+                        "X-Api-Version":"PAYLOAD"
                     },
                     "cookies": 
-                    {
-                        "name1":"example",
-                        "name2":"example"
-                    },
+                    {},
                     "post":
                     {
-                        "json":
-                        {
-                            "client-id":"PAYLOAD"
-                        },
+                        "json":{},
                         "data":{}
                     }
                 }

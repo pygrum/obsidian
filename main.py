@@ -9,6 +9,42 @@ To test a website for Log4Shell, it would be wise to test multiple endpoints (pa
 is likely to be used in multiple places. It should also be tested on multiple endpoints, both of which can be 
 specified by the user in the targets.json file.
 """
+
+"""
+typical target object example:
+,
+        {
+            "name":"example",
+            "uri":"https://example.com",
+            "endpoints":
+            [
+                {
+                    "port":"80",
+                    "endpoint":"/api",
+                    "method":"POST",
+                    "params":{},
+                    "headers":
+                    {
+                        "Accept":"application/json"
+                    },
+                    "cookies": 
+                    {
+                        "name1":"example",
+                        "name2":"example"
+                    },
+                    "post":
+                    {
+                        "json":
+                        {
+                            "client-id":"PAYLOAD"
+                        },
+                        "data":{}
+                    }
+                }
+            ]
+        }
+"""
+
 import json, requests
 
 def log ( call ):
@@ -16,7 +52,7 @@ def log ( call ):
     This function will send a json object of the details of the request that we sent, as well as the details of
     the response of the server. This is for the future, to export data to a dashboard for example.
     """
-    # print( call )
+    print( call )
 
 
 
@@ -27,7 +63,7 @@ def replace_dicts ( obj, rep_str, payload ):
         obj[key] = value
     return obj
 
-def process (target, payload, endpoint, rep_str): 
+def process (target, payload, endpoint, rep_str, proxies): 
     """
     This function constructs the request based off of the values defined in the targets file.
     """
@@ -36,7 +72,8 @@ def process (target, payload, endpoint, rep_str):
     # and replaces wherever the payload replace string ('i.e. PAYLOAD') is with the actual payload
 
     REQUEST_VERB = endpoint["method"]
-    URL = target["uri"] + endpoint["endpoint"]
+    URL = target["uri"] + ":" + endpoint["port"] + endpoint["endpoint"]
+    URL = URL.replace(rep_str, payload["payload"]) # Replace special string with payload if required 
 
     # Replace any request params with payload (if specified)
     PARAMS = replace_dicts( endpoint["params"], rep_str, payload["payload"])   
@@ -66,13 +103,15 @@ def process (target, payload, endpoint, rep_str):
     headers=HEADERS,                            
     cookies=COOKIES,
     json=JSON,                                  # json in request body
-    data=DATA,                                  # any post data (file input support can be added in the future)
+    data=DATA, 
+    proxies=proxies                                 # any post data (file input support can be added in the future)
     )
 
 
     call = {
         "method":REQUEST_VERB,
         "url":URL,
+        "proxies":proxies,
         "params":PARAMS,
         "headers":HEADERS,
         "cookies":COOKIES,
@@ -96,10 +135,11 @@ def load_jsons (target_file, payload_file):
         payloads = json.load(pf)                            # Convert json file to array of dicts, named 'payload_data'
 
     replace_string = target_data["replace-string"]
+    proxies = target_data["proxies"]
     for target in target_data["targets"]:
         for endpoint in target["endpoints"]:
             for payload in payloads:
-                process(target, payload, endpoint, replace_string)        # payloads|>----endpoint|>----target
+                process(target, payload, endpoint, replace_string, proxies)        # payloads|>----endpoint|>----target
 
 
 
