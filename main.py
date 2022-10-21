@@ -24,10 +24,12 @@ def start (target_file, payload_file, args):
     for target in target_data["targets"]:
         for endpoint in target["endpoints"]:
             for payload in payloads:
-                if (payload["id"] in args.fp) or (target["id"] in args.ft):
+                if ((payload["id"] in args.fp) or (target["id"] in args.ft)) or ((args.fp == []) and (args.ft == [])):
+                    call = processor.process(target, payload, endpoint, replace_string, proxies)
+                    log (call)       # payloads|>----endpoint|>----target
+                else:
                     continue
-                call = processor.process(target, payload, endpoint, replace_string, proxies)
-                log (call)       # payloads|>----endpoint|>----target
+
 
 
 parser = argparse.ArgumentParser()
@@ -36,8 +38,8 @@ subparsers = parser.add_subparsers()
 run = subparsers.add_parser("run")
 run.add_argument("--targets", metavar="", default="targets.json", help="specify json file full of targets (use targets.json as writing reference)")
 run.add_argument("--payloads", metavar="", default="payloads.json", help="specify json file full of payloads (use payloads.json as writing reference)")
-run.add_argument("-fp", metavar="",nargs="*", default=[], help="do NOT run payloads that match the IDs specified")
-run.add_argument("-ft", metavar="",nargs="*", default=[], help="do NOT test against targets that match the IDs specified")
+run.add_argument("-fp", metavar="",nargs="*", default=[], help="run payloads that match the IDs specified")
+run.add_argument("-ft", metavar="",nargs="*", default=[], help="test against targets that match the IDs specified")
 
 args = parser.parse_args()
 start(args.targets, args.payloads, args)
