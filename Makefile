@@ -8,3 +8,5 @@ run:
 
 clean:
 	sudo docker image rm obsidian-be
+restart:
+	make clean 2>/dev/null; make build && make run
