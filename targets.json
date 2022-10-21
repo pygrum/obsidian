@@ -4,7 +4,7 @@
     "targets":
     [
         {
-            "name":"log4shell app",
+            "id":"log4shell-app",
             "uri":"http://172.17.0.2",
             "endpoints":
             [
