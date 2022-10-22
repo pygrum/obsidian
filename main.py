@@ -1,49 +1,5 @@
 #!/usr/bin/env python3
-"""
-Log4Shell is a vulnerability disclosed in December 2021, concerning the Apache logging library Log4j.
-It allowed an attacker to execute code via a logged parameter in a HTTP(S) request, such as a header, or post data.
-An attacker would pass a payload through a logged parameter causing the server to access their LDAP server, and evaluate
-the Java code hosted by the attacker.
-
-To test a website for Log4Shell, it would be wise to test multiple endpoints (pages on the site), as the library
-is likely to be used in multiple places. It should also be tested on multiple endpoints, both of which can be 
-specified by the user in the targets.json file.
-"""
-
-"""
-typical target object example:
-,
-        {
-            "name":"example",
-            "uri":"https://example.com",
-            "endpoints":
-            [
-                {
-                    "port":"80",
-                    "endpoint":"/api",
-                    "method":"POST",
-                    "params":{},
-                    "headers":
-                    {
-                        "Accept":"application/json"
-                    },
-                    "cookies": 
-                    {
-                        "name1":"example",
-                        "name2":"example"
-                    },
-                    "post":
-                    {
-                        "json":
-                        {
-                            "client-id":"PAYLOAD"
-                        },
-                        "data":{}
-                    }
-                }
-            ]
-        }
-"""
+import processor, argparse, json
 
 import json, requests
 
@@ -52,20 +8,15 @@ def log ( call ):
     This function will send a json object of the details of the request that we sent, as well as the details of
     the response of the server. This is for the future, to export data to a dashboard for example.
     """
-    print( call )
+    print(call)
 
 
 
-def replace_dicts ( obj, rep_str, payload ):
-    # Replaces each replace-string ('i.e. PAYLOAD') in all dict keys' values with the payload.
-    for key, value in obj.items():
-        value = value.replace( rep_str, payload )
-        obj[key] = value
-    return obj
 
-def process (target, payload, endpoint, rep_str, proxies): 
+def start (target_file, payload_file, args):
+
     """
-    This function constructs the request based off of the values defined in the targets file.
+    starts processing combinations of targets, payloads and endpoints
     """
 
     # Next block defines the request details
@@ -139,10 +90,25 @@ def load_jsons (target_file, payload_file):
     for target in target_data["targets"]:
         for endpoint in target["endpoints"]:
             for payload in payloads:
-                process(target, payload, endpoint, replace_string, proxies)        # payloads|>----endpoint|>----target
+                if ((payload["id"] in args.fp) or (target["id"] in args.ft)) or ((args.fp == []) and (args.ft == [])):
+                    call = processor.process(target, payload, endpoint, replace_string, proxies)
+                    log (call)       # payloads|>----endpoint|>----target
+                else:
+                    continue
 
 
 
-if __name__ == "__main__":
-    load_jsons("targets.json", "payloads.json")
+parser = argparse.ArgumentParser()
+subparsers = parser.add_subparsers()
+
+run = subparsers.add_parser("run")
+run.add_argument("--targets", metavar="", default="targets.json", help="specify json file full of targets (use targets.json as writing reference)")
+run.add_argument("--payloads", metavar="", default="payloads.json", help="specify json file full of payloads (use payloads.json as writing reference)")
+run.add_argument("-fp", metavar="",nargs="*", default=[], help="run payloads that match the IDs specified")
+run.add_argument("-ft", metavar="",nargs="*", default=[], help="test against targets that match the IDs specified")
+
+args = parser.parse_args()
+start(args.targets, args.payloads, args)
+
+
 

