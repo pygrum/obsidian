@@ -16,3 +16,4 @@ You may wish to run a simple test for the tool. This can be run using the image 
 
 6. In the repo base directory, run `make start`. You should see a log of the request made and it's response. check 'view connections' in https://log4shell.huntress.com. An entry should appear.
 
+
