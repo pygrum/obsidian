@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"flag"
+	"sync"
 )
 
 
@@ -44,12 +45,12 @@ type Body struct {
 	FormData string `json:"form-data"`
 }
 
-// An array of payloads
-
 type Payload struct {
 	ID string `json:"id"`
 	Payload string `json:"payload"`
 }
+
+var wg sync.WaitGroup
 
 // Function to fetch payloads from payload config file
 func GetPayloads(payloadFile string) ([]Payload, error) {
@@ -65,6 +66,7 @@ func GetPayloads(payloadFile string) ([]Payload, error) {
 	return  payloads, nil
 }
 
+
 // Function to fetch targets from target config file
 func (targets *Targets) GetTargets(targetFile string) error {
 	jsonFile, err := os.ReadFile(targetFile) 
@@ -78,23 +80,18 @@ func (targets *Targets) GetTargets(targetFile string) error {
 	return nil
 }
 
-func SendRequest() error {
-return nil
+func TestTargets(targets *Targets, payloads *[]Payload) {
+	replace_string := targets.Replace_str
+
+	for _, target := range targets.Targets {
+		for _, endpoint := range target.Endpoints {
+			for _, payload := range *payloads {
+				wg.Add(1)
+				go BuildReq(&target, &endpoint, &payload, replace_string) // function from sender.go
+			}
+		}
+	}
 }
-
-//func TestTargets(targets *Targets, payloads *Payloads) {
-//	replace_string := targets.Replace_str
-//	replace_id := payloads.Replace_string
-
-//	for _, target := range targets.Targets {
-//		for _, endpoint := range targets.Endpoints {
-//			for _, payload := range payloads.Payloads {
-//				wg.Add(1)
-				//go SendRequest()
-//			}
-//		}
-//	}
-//}
 
 //Host connection details
 var lhost string
@@ -143,8 +140,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(payloads)
-	//TestTargets(&targets, &payloads)
-	//wg.Wait()
+	TestTargets(&targets, &payloads)
+	wg.Wait()
 	return
 }
