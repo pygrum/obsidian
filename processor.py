@@ -52,10 +52,12 @@ def process (target, payload, endpoint, rep_str, proxies):
     cookies=COOKIES,
     json=JSON,                                  # json in request body
     data=DATA, 
-    proxies=proxies
+    proxies=proxies,
     )
-    except ConnectionError:
-        pass
+
+    except (ConnectionError, UnboundLocalError):
+        print("[!]FATAL: Host does not exist or cannot be reached.")
+        exit()
 
 
     call = {
