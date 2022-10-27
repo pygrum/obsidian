@@ -9,8 +9,6 @@ COPY . .
 
 RUN chown -R runner:runner ../obsidian 
 
-RUN ls -al ..
-
 RUN go build -o obsidian .
 
 CMD [ "./obsidian" ]
