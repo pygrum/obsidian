@@ -1,9 +1,12 @@
-.PHONY: run
-run: main
-	./obsidian
+.PHONY: build run clean start
 
-main: 
-	go build -o obsidian .
+build:
+	sudo docker build -t obsidian .
 
-.PHONY: all
-all: main
+run:
+	sudo docker run -it --rm --name obsidian-runtime obsidian
+
+clean:
+	sudo docker image rm obsidian
+start:
+	make clean 2>/dev/null; make build && make run

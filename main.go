@@ -15,6 +15,13 @@ type Targets struct {
 	Replace_str string `json:"replace-string"`
 	LHOST string `json:"lhost"`
 	LPORT string `json:"lport"`
+	Verbose bool `json:"verbose"`
+}
+
+//Filter structure allowing you to only run targets / payloads by their id
+type Filters struct {
+	Target_wl []string `json:"target-whitelist"`
+	Payload_wl []string `json:"payload-whitelist"`
 }
 
 type Target struct {
@@ -81,13 +88,50 @@ func (targets *Targets) GetTargets(targetFile string) error {
 	return nil
 }
 
-func TestTargets(targets *Targets, payloads *[]Payload) {
+// Fetch filters from config
+func (filters *Filters) GetFilters(filterFile string) error {
+	jsonFile, err := os.ReadFile(filterFile) 
+	if err != nil {
+		return fmt.Errorf("Failed to load filter json file: %v",err)
+	}
+	err = json.Unmarshal(jsonFile, filters)
+	if err != nil {
+		return fmt.Errorf("Failed to unmarshal filter json file: %v",err)
+	}
+	return nil
+}
+
+func stringInSlice(a string, list []string) bool {
+    for _, b := range list {
+        if b == a {
+            return true
+        }
+    }
+    return false
+}
+
+func TestTargets(targets *Targets, payloads *[]Payload, filters *Filters) {
 	replace_string = targets.Replace_str
-	
 	for _, target := range targets.Targets {
+		if !stringInSlice(target.ID, filters.Target_wl) && len(filters.Target_wl) != 0 { 
+			continue
+		}
+		tid := string("Testing: ") + target.ID + string(" (") + target.URI + string(") ")
+		fmt.Println(tid)
 		for _, endpoint := range target.Endpoints {
+			if verbose {
+				fmt.Println("	|_")
+				fmt.Println("	  Endpoint: [",endpoint.Path,"]")
+			}
 			for _, payload := range *payloads {
+				if !stringInSlice(payload.ID, filters.Payload_wl) && len(filters.Payload_wl) != 0 {
+					continue
+				}
 				wg.Add(1)
+				if verbose {
+					fmt.Println("		|_")
+					fmt.Println("		  Running: [",payload.ID,"]")
+				}
 				go BuildReq(&target, &endpoint, &payload) // function from sender.go (same package (main) while local)
 			}
 		}
@@ -101,6 +145,7 @@ var lport string
 //Payload replace-string details
 var replace_string string
 
+var verbose bool
 
 func main() {
 	title := `		       __        __                 
@@ -112,7 +157,7 @@ func main() {
 	`
 	fmt.Println(title)	
 	targets := Targets{}
-
+	filters := Filters{}
 	//array of payloads struct
 	payloads, err := GetPayloads("payloads.json")
 	if err != nil {
@@ -124,6 +169,12 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	err = filters.GetFilters("filters.json")
+        if err != nil {
+        	fmt.Println(err)
+        	return
+        }
+
 	lhost = targets.LHOST
 	lport = targets.LPORT
 	
@@ -131,8 +182,9 @@ func main() {
 		fmt.Println("Warning: Local host and / or local port has not been provided.")
 		fmt.Println("Some payloads may not work correctly.")
 	}
-
-	TestTargets(&targets, &payloads)
+	
+	verbose = targets.Verbose
+	TestTargets(&targets, &payloads, &filters)
 	wg.Wait()
 	return
 }
