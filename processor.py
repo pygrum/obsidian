@@ -56,7 +56,7 @@ def process (target, payload, endpoint, rep_str, proxies):
     )
 
     except (ConnectionError, UnboundLocalError):
-        print("[!]FATAL: Host does not exist or cannot be reached.")
+        print("[!] FATAL: Host does not exist or cannot be reached.")
         exit()
 
 
