@@ -1,8 +1,8 @@
 .PHONY: run
 run: main
-	./apicker
+	./obsidian
 
-main: *.go go.mod
+main: 
 	go build -o obsidian .
 
 .PHONY: all

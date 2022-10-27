@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"flag"
 	"sync"
 )
 
@@ -14,6 +13,8 @@ type Targets struct {
 	Targets []Target `json:"targets"`
 	//soon to add proxy support
 	Replace_str string `json:"replace-string"`
+	LHOST string `json:"lhost"`
+	LPORT string `json:"lport"`
 }
 
 type Target struct {
@@ -81,13 +82,13 @@ func (targets *Targets) GetTargets(targetFile string) error {
 }
 
 func TestTargets(targets *Targets, payloads *[]Payload) {
-	replace_string := targets.Replace_str
-
+	replace_string = targets.Replace_str
+	
 	for _, target := range targets.Targets {
 		for _, endpoint := range target.Endpoints {
 			for _, payload := range *payloads {
 				wg.Add(1)
-				go BuildReq(&target, &endpoint, &payload, replace_string) // function from sender.go
+				go BuildReq(&target, &endpoint, &payload) // function from sender.go (same package (main) while local)
 			}
 		}
 	}
@@ -96,6 +97,9 @@ func TestTargets(targets *Targets, payloads *[]Payload) {
 //Host connection details
 var lhost string
 var lport string
+
+//Payload replace-string details
+var replace_string string
 
 
 func main() {
@@ -106,27 +110,7 @@ func main() {
 	(____  /   __/|__|\___  >__|_ \\___  >__|   
 	     \/|__|           \/     \/    \/       
 	`
-	fmt.Println(title)
-	flag.StringVar(&lhost, "l", "", "specify the local IP address, which will replace LHOST in payloads")
-	flag.StringVar(&lport, "p", "", "specify the local port, which will replace LPORT in payloads")
-	boolPtr := flag.Bool("h", false, "show this help message and exit")
-
-	for _, arg := range os.Args {
-		if arg == "-h" {
-			*boolPtr = true
-			break
-		}
-	}
-
-	flag.Parse()
-	if *boolPtr == true{
-		flag.PrintDefaults()
-		return
-	}
-	
-	if lhost == "" || lport == "" {
-		fmt.Println("Warning: Local host and/or local port not specified, payloads requiring either may not run correctly.")
-	}
+	fmt.Println(title)	
 	targets := Targets{}
 
 	//array of payloads struct
@@ -140,6 +124,14 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	lhost = targets.LHOST
+	lport = targets.LPORT
+	
+	if lhost == "" || lport == "" {
+		fmt.Println("Warning: Local host and / or local port has not been provided.")
+		fmt.Println("Some payloads may not work correctly.")
+	}
+
 	TestTargets(&targets, &payloads)
 	wg.Wait()
 	return
