@@ -10,7 +10,7 @@ def log ( call ):
     """
     print(call)
 
-def load_jsons (target_file, payload_file):
+def load_jsons (target_file, payload_file, args):
     with open(target_file, "r") as tf:
         target_data = json.load(tf)                             # Convert json file into dictionary named 'targets'
 
@@ -40,7 +40,7 @@ run.add_argument("-fp", metavar="",nargs="*", default=[], help="run payloads tha
 run.add_argument("-ft", metavar="",nargs="*", default=[], help="test against targets that match the IDs specified")
 
 args = parser.parse_args()
-start(args.targets, args.payloads, args)
+load_jsons(args.targets, args.payloads, args)
 
 
 

@@ -68,8 +68,6 @@ def process (target, payload, endpoint, rep_str, proxies):
         "post-data":{
             "json":JSON,
             "data":DATA,
-        },
-        "status-code":response.status_code,
-        "response-data":response.__dict__
+        }
     }
     return call
