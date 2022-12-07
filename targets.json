@@ -3,7 +3,7 @@
     "proxies":{},
     "lhost":"172.17.0.1",
     "lport":"443",
-    "verbose":false,
+    "verbose":true,
     "targets":
     [
         {
