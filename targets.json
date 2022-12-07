@@ -3,7 +3,6 @@
     "proxies":{},
     "lhost":"172.17.0.1",
     "lport":"443",
-    "verbose":true,
     "targets":
     [
         {
@@ -15,20 +14,17 @@
                     "port":"8080",
                     "endpoint":"/",
                     "method":"GET",
-                    "params":[
-			    []
-		    ],
                     "headers":[
-			    ["X-Api-Version","PAYLOAD"]
-		    ],
+                        ["X-Api-Version","PAYLOAD"]
+                    ],
                     "cookies":
-		    [
-			    {
-				    "name":"",
-				    "value":"",
-				    "max-age":0
-			    }
-		    ],
+                    [
+                        {
+                            "name":"",
+                            "value":"",
+                            "max-age":0
+                        }
+                    ],
                     "post":
                     {
                         "json":"",
