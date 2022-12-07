@@ -1,0 +1,37 @@
+{
+    "replace-string":"PAYLOAD",
+    "proxies":{},
+    "lhost":"172.17.0.1",
+    "lport":"443",
+    "targets":
+    [
+        {
+            "id":"log4shell-app",
+            "uri":"http://172.17.0.2",
+            "endpoints":
+            [
+                {
+                    "port":"8080",
+                    "endpoint":"/",
+                    "method":"GET",
+                    "headers":[
+                        ["X-Api-Version","PAYLOAD"]
+                    ],
+                    "cookies":
+                    [
+                        {
+                            "name":"",
+                            "value":"",
+                            "max-age":0
+                        }
+                    ],
+                    "post":
+                    {
+                        "json":"",
+                        "form-data":""
+                    }
+                }
+            ]
+        }
+    ]
+}
